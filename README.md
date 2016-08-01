@@ -1,0 +1,1 @@
+# affiliates-cm-coupon-rates
