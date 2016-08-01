@@ -81,6 +81,7 @@ class Affiliates_CM_Coupon_Rates {
 
 		if ( $verified ) {
 			add_action( 'affiliates_admin_menu', array( __CLASS__, 'affiliates_admin_menu' ) );
+			include_once( 'class-affiliates-cr-method.php' );
 		}
 	}
 	
