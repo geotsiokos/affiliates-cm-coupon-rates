@@ -3,7 +3,6 @@ class Affiliates_CR_Method {
 	public static function init() {
 		if ( class_exists( 'Affiliates_Referral' ) ) {
 			Affiliates_Referral::register_referral_amount_method( array( __CLASS__, 'coupon_rates' ) );
-			write_log( 'init' );
 		}
 	}
 
