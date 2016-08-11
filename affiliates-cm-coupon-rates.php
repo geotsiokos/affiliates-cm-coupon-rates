@@ -15,8 +15,7 @@
  * @since 1.0.0
  *
  * Plugin Name: Affiliates Custom Method Coupon Rates
- * @todo change plugin URI
- * Plugin URI: http://www.itthinx.com/plugins/affiliates-cm-coupon-rates/
+ * Plugin URI: http://www.netpad.gr/
  * Description: Set different affiliate rate according to coupon code, compatible with Affiliates Pro and Affiliates Enterprise by <a href="http://www.itthinx.com" target="_blank">itthinx</a> and <a href="http://www.woothemes.com/woocommerce" target="_blank">WooCommerce</a>.
  * Author: gtsiokos
  * Author URI: http://www.netpad.gr/
@@ -119,12 +118,10 @@ class Affiliates_CM_Coupon_Rates {
 				} else if ( $options[self::REFERRAL_RATE] < 0 ) {
 						$options[self::REFERRAL_RATE] = 0.0;
 				}
-				if ( strlen( $_POST[self::COUPON_PREFIX] ) > 3 ) {
-					$options[self::COUPON_PREFIX] = substr( $_POST[self::COUPON_PREFIX], 0, 3 );
-				} else {
-					$options[self::COUPON_PREFIX] = strtolower( $_POST[self::COUPON_PREFIX] );
-				}
-				
+				$options[self::COUPON_PREFIX] = strtolower( $_POST[self::COUPON_PREFIX] );
+				if ( strlen( $options[self::COUPON_PREFIX] ) > 3 ) {
+					$options[self::COUPON_PREFIX] = substr( $options[self::COUPON_PREFIX], 0, 3 );
+				} 				
 			}
 			update_option( self::PLUGIN_OPTIONS, $options );
 		}
