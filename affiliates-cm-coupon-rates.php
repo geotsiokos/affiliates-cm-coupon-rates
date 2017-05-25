@@ -55,9 +55,7 @@ class Affiliates_CM_Coupon_Rates {
 	 * Checks dependencies and sets up actions and filters.
 	 */
 	public static function init() {
-
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
-
 		$verified = true;
 		$disable = false;
 		$active_plugins = get_option( 'active_plugins', array() );
@@ -124,8 +122,7 @@ class Affiliates_CM_Coupon_Rates {
 				} 				
 			}
 			update_option( self::PLUGIN_OPTIONS, $options );
-		}
-		
+		}		
 		$referral_rate = isset( $options[self::REFERRAL_RATE] ) ? $options[self::REFERRAL_RATE] : self::REFERRAL_RATE_DEFAULT;
 		$coupon_prefix = isset( $options[self::COUPON_PREFIX] ) ? $options[self::COUPON_PREFIX] : self::COUPON_PREFIX_DEFAULT;
 		
@@ -134,48 +131,38 @@ class Affiliates_CM_Coupon_Rates {
 		'<h2>' .
 		__( 'Affiliates CM Coupon Rates', 'affiliates-cm-coupon-rates' ) .
 		'</h2>' .
-		'</div>';
-				
+		'</div>';				
 		
 		$output .= '<div style="padding:1em 2em 1em 1em;margin-right:1em;">';
 		$output .= '<form action="" name="options" method="post">';
-		$output .= '<div>';
-		
+		$output .= '<div>';		
 		$output .= '<p>';
-		$output .= __( 'Set the referral rate that will be applied when a coupon is used.', 'affiliates-cm-coupon-rates' );
-		$output .= '</p>';
-		
+		$output .= __( 'Set the referral rate that will be applied when a coupon is used with the prefix set below.', 'affiliates-cm-coupon-rates' );
+		$output .= '</p>';		
 		$output .= '<p>';
 		$output .= '<label for="' . self::REFERRAL_RATE . '">' . __( 'Referral rate', 'affiliates-cm-coupon-rates') . '</label>';
 		$output .= '&nbsp;';
 		$output .= '<input name="' . self::REFERRAL_RATE . '" type="text" value="' . esc_attr( $referral_rate ) . '"/>';
-		$output .= '</p>';
-		
+		$output .= '</p>';		
 		$output .= '<p class="description">';
 		$output .= __( 'Example: Set the referral rate to <strong>0.1</strong> if you want your affiliates to get a <strong>10%</strong> commission on each sale.', 'affiliates-cm-coupon-rates' );
-		$output .= '</p>';
-		
-		$output .= '<hr>';
-		
+		$output .= '</p>';		
+		$output .= '<hr>';		
 		$output .= '<p>';
 		$output .= __( 'Type the coupon prefix which the referral rate will be applied for.', 'affiliates-cm-coupon-rates' );
-		$output .= '</p>';
-		
+		$output .= '</p>';		
 		$output .= '<p>';
 		$output .= '<label for="' . self::COUPON_PREFIX . '">' . __( 'Coupon prefix', 'affiliates-cm-coupon-rates') . '</label>';
 		$output .= '&nbsp;';
 		$output .= '<input name="' . self::COUPON_PREFIX . '" type="text" value="' . esc_attr( $coupon_prefix ) . '"/>';
-		$output .= '</p>';
-		
+		$output .= '</p>';		
 		$output .= '<p class="description">';
 		$output .= __( 'Example: Set the coupon prefix to <strong>aff</strong> if you want your affiliates to get <strong>' . esc_attr( $referral_rate ) . '</strong> commission whenever a coupon code starting with <strong>aff</strong> is applied on checkout.', 'affiliates-cm-coupon-rates' );
-		$output .= '</p>';
-		
+		$output .= '</p>';		
 		$output .= '<p>';
 		$output .= wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
 		$output .= '<input class="button-primary" type="submit" name="submit" value="' . __( 'Save', 'affiliates-cm-coupon-rates' ) . '"/>';
-		$output .= '</p>';
-		
+		$output .= '</p>';		
 		$output .= '</div>';
 		$output .= '</form>';
 		$output .= '</div>';
