@@ -46,7 +46,7 @@ class Affiliates_CR_Method {
 						}
 						if ( $coupon == $coupon_prefix ) {
 							$sum = floatval( $referral_rate ) * $base_amount;
-						}						
+						}					
 						break;
 					}
 				}

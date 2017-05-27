@@ -30,13 +30,12 @@ class Affiliates_CM_Coupon_Rates {
 
 	const PLUGIN_OPTIONS 			= 'affiliates_cm_coupon_rates';
 	const REFERRAL_RATE 			= 'referral-rate';
-	const REFERRAL_RATE_DEFAULT 	= '0';
+	const REFERRAL_RATE_DEFAULT 	= 'referral-rate-default';
 	const COUPON_PREFIX				= 'coupon_prefix';
 	const COUPON_PREFIX_DEFAULT		= '';
 	const NONCE 					= 'aff_cm_coupons_admin_nonce';
 	const SET_ADMIN_OPTIONS 		= 'set_admin_options';
-
-	
+	const DELETE_DATA				= 'delete-data';	
 
 	private static $admin_messages = array();
 
@@ -78,6 +77,7 @@ class Affiliates_CM_Coupon_Rates {
 
 		if ( $verified ) {
 			add_action( 'affiliates_admin_menu', array( __CLASS__, 'affiliates_admin_menu' ) );
+			register_uninstall_hook( __FILE__, array( __CLASS__, 'affiliates_cm_coupon_rates_uninstall' ) );
 			include_once( 'class-affiliates-cr-method.php' );
 		}
 	}
@@ -116,15 +116,24 @@ class Affiliates_CM_Coupon_Rates {
 				} else if ( $options[self::REFERRAL_RATE] < 0 ) {
 						$options[self::REFERRAL_RATE] = 0.0;
 				}
+				$options[self::REFERRAL_RATE_DEFAULT]  = floatval( $_POST[self::REFERRAL_RATE_DEFAULT] );
+				if ( $options[self::REFERRAL_RATE_DEFAULT] > 1.0 ) {
+					$options[self::REFERRAL_RATE_DEFAULT] = 1.0;
+				} else if ( $options[self::REFERRAL_RATE_DEFAULT] < 0 ) {
+					$options[self::REFERRAL_RATE_DEFAULT] = 0.0;
+				}
 				$options[self::COUPON_PREFIX] = strtolower( $_POST[self::COUPON_PREFIX] );
 				if ( strlen( $options[self::COUPON_PREFIX] ) > 3 ) {
 					$options[self::COUPON_PREFIX] = substr( $options[self::COUPON_PREFIX], 0, 3 );
-				} 				
+				} 	
+				$options[self::DELETE_DATA] = isset ( $_POST[self::DELETE_DATA] ) ? 'on' : '';
 			}
 			update_option( self::PLUGIN_OPTIONS, $options );
 		}		
-		$referral_rate = isset( $options[self::REFERRAL_RATE] ) ? $options[self::REFERRAL_RATE] : self::REFERRAL_RATE_DEFAULT;
-		$coupon_prefix = isset( $options[self::COUPON_PREFIX] ) ? $options[self::COUPON_PREFIX] : self::COUPON_PREFIX_DEFAULT;
+		$referral_rate 	= isset( $options[self::REFERRAL_RATE] ) ? $options[self::REFERRAL_RATE] : self::REFERRAL_RATE_DEFAULT;
+		$coupon_prefix 	= isset( $options[self::COUPON_PREFIX] ) ? $options[self::COUPON_PREFIX] : self::COUPON_PREFIX_DEFAULT;
+		$default_rate 	= isset( $options[self::REFERRAL_RATE_DEFAULT] ) ? $options[self::REFERRAL_RATE_DEFAULT] : 0;
+		$delete_data	= isset( $options[self::DELETE_DATA] ) ? $options[self::DELETE_DATA] : '';
 		
 		$output .=
 		'<div>' .
@@ -140,7 +149,7 @@ class Affiliates_CM_Coupon_Rates {
 		$output .= __( 'Set the referral rate that will be applied when a coupon is used with the prefix set below.', 'affiliates-cm-coupon-rates' );
 		$output .= '</p>';		
 		$output .= '<p>';
-		$output .= '<label for="' . self::REFERRAL_RATE . '">' . __( 'Referral rate', 'affiliates-cm-coupon-rates') . '</label>';
+		$output .= '<label for="' . self::REFERRAL_RATE . '"><strong>' . __( 'Referral rate', 'affiliates-cm-coupon-rates') . '</strong></label>';
 		$output .= '&nbsp;';
 		$output .= '<input name="' . self::REFERRAL_RATE . '" type="text" value="' . esc_attr( $referral_rate ) . '"/>';
 		$output .= '</p>';		
@@ -152,13 +161,31 @@ class Affiliates_CM_Coupon_Rates {
 		$output .= __( 'Type the coupon prefix which the referral rate will be applied for.', 'affiliates-cm-coupon-rates' );
 		$output .= '</p>';		
 		$output .= '<p>';
-		$output .= '<label for="' . self::COUPON_PREFIX . '">' . __( 'Coupon prefix', 'affiliates-cm-coupon-rates') . '</label>';
+		$output .= '<label for="' . self::COUPON_PREFIX . '"><strong>' . __( 'Coupon prefix', 'affiliates-cm-coupon-rates') . '</strong></label>';
 		$output .= '&nbsp;';
 		$output .= '<input name="' . self::COUPON_PREFIX . '" type="text" value="' . esc_attr( $coupon_prefix ) . '"/>';
 		$output .= '</p>';		
 		$output .= '<p class="description">';
 		$output .= __( 'Example: Set the coupon prefix to <strong>aff</strong> if you want your affiliates to get <strong>' . esc_attr( $referral_rate ) . '</strong> commission whenever a coupon code starting with <strong>aff</strong> is applied on checkout.', 'affiliates-cm-coupon-rates' );
-		$output .= '</p>';		
+		$output .= '</p>';	
+		$output .= '<hr>';
+		$output .= '<p>';
+		$output .= __( 'Enter a default referral rate when the set coupon prefix does not apply.', 'affiliates-cm-coupon-rates' );
+		$output .= '</p>';
+		$output .= '<p>';
+		$output .= '<label for="' . self::REFERRAL_RATE_DEFAULT . '"><strong>' . __( 'Default Referral Rate', 'affiliates-cm-coupon-rates') . '</strong></label>';
+		$output .= '&nbsp;';
+		$output .= '<input name="' . self::REFERRAL_RATE_DEFAULT . '" type="text" value="' . esc_attr( $default_rate ) . '"/>';
+		$output .= '</p>';
+		$output .= '<hr>';
+		$output .= '<p>';
+		$output .= __( 'Enable this option if you like to delete plugin data upon uninstall. Please note that once deleted, the data cannot be recovered.', 'affiliates-cm-coupon-rates' );
+		$output .= '</p>';
+		$output .= '<p>';
+		$output .= '<label for="' . self::DELETE_DATA . '"><strong>' . __( 'Delete Data', 'affiliates-cm-coupon-rates') . '</strong></label>';
+		$output .= '&nbsp;';
+		$output .= '<input name="' . self::DELETE_DATA . '" type="checkbox" ' . ( $delete_data == 'on' ? ' checked="checked" ' : '' ) . '/>';
+		$output .= '</p>';
 		$output .= '<p>';
 		$output .= wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
 		$output .= '<input class="button-primary" type="submit" name="submit" value="' . __( 'Save', 'affiliates-cm-coupon-rates' ) . '"/>';
@@ -168,6 +195,16 @@ class Affiliates_CM_Coupon_Rates {
 		$output .= '</div>';
 		
 		echo $output;
+	}
+	
+	/**
+	 * Deletes plugin data upon uninstall
+	 */
+	public static function affiliates_cm_coupon_rates_uninstall() {
+		$options = (array) get_option( self::PLUGIN_OPTIONS );
+		if ( isset( $ptions[ self::DELETE_DATA ] ) && $options[ self::DELETE_DATA ] == 'on' ) {
+			delete_option( self::PLUGIN_OPTIONS );
+		}
 	}
 	
 } Affiliates_CM_Coupon_Rates::init();
