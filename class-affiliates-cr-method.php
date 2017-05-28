@@ -40,12 +40,15 @@ class Affiliates_CR_Method {
 						$affiliate_id = Affiliates_Attributes_WordPress::get_affiliate_for_coupon( $coupon );
 						$options = get_option( Affiliates_CM_Coupon_Rates::PLUGIN_OPTIONS , array() );
 						$referral_rate = isset( $options[Affiliates_CM_Coupon_Rates::REFERRAL_RATE] ) ? $options[Affiliates_CM_Coupon_Rates::REFERRAL_RATE] : Affiliates_CM_Coupon_Rates::REFERRAL_RATE_DEFAULT;
+						$referral_rate_default = isset( $options[Affiliates_CM_Coupon_Rates::REFERRAL_RATE_DEFAULT] ) ? $options[Affiliates_CM_Coupon_Rates::REFERRAL_RATE_DEFAULT] : 0;
 						$coupon_prefix = isset( $options[Affiliates_CM_Coupon_Rates::COUPON_PREFIX] ) ? $options[Affiliates_CM_Coupon_Rates::COUPON_PREFIX] : Affiliates_CM_Coupon_Rates::COUPON_PREFIX_DEFAULT;
 						if ( strlen( $coupon ) > 3 ) {
 							$coupon = substr( $coupon, 0, 3 );
 						}
 						if ( $coupon == $coupon_prefix ) {
 							$sum = floatval( $referral_rate ) * $base_amount;
+						} else {
+							$sum = floatval( $referral_rate_default ) * $base_amount;
 						}					
 						break;
 					}
