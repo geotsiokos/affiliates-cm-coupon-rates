@@ -202,7 +202,7 @@ class Affiliates_CM_Coupon_Rates {
 	 */
 	public static function affiliates_cm_coupon_rates_uninstall() {
 		$options = (array) get_option( self::PLUGIN_OPTIONS );
-		if ( isset( $ptions[ self::DELETE_DATA ] ) && $options[ self::DELETE_DATA ] == 'on' ) {
+		if ( isset( $options[ self::DELETE_DATA ] ) && $options[ self::DELETE_DATA ] == 'on' ) {
 			delete_option( self::PLUGIN_OPTIONS );
 		}
 	}
